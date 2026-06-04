@@ -28,7 +28,16 @@ export function initFiltering(elements, indexes) {
             }
         }
 
+        const filterState = { ...state };
+
+        const from = state.totalFrom ? parseFloat(state.totalFrom) : undefined;
+        const to = state.totalTo ? parseFloat(state.totalTo) : undefined;
+
+        if (from !== undefined || to !== undefined) {
+            filterState.total = [from, to];
+        }
+
         // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data.filter(row => compare(row, state)); 
+        return data.filter(row => compare(row, filterState)); 
     }
 }
