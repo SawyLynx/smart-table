@@ -5,8 +5,8 @@ const compare = createComparison(defaultRules);
 
 export function initFiltering(elements, indexes) {
     // @todo: #4.1 — заполнить выпадающие списки опциями
-    Object.keys(indexes).forEach((elementName) => {                        // Перебираем по именам
-        elements[elementName].append(...Object.values(indexes[elementName]).map(name => {                        // используйте name как значение и текстовое содержимое
+    Object.keys(indexes).forEach((element) => {                        // Перебираем по именам
+        elements[element].append(...Object.values(indexes[element]).map(name => {                        // используйте name как значение и текстовое содержимое
             const option = document.createElement('option');
             option.value = name;
             option.textContent = name;

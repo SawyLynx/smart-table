@@ -17,7 +17,7 @@ export function initTable(settings, onAction) {
 
     [...before].reverse().forEach(template => {
         root[template] = cloneTemplate(template);
-        root.container.append(root[template].container);
+        root.container.prepend(root[template].container);
     });
     root.beforeComponents.reverse();
 
