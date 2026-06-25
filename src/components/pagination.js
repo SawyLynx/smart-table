@@ -6,7 +6,7 @@ export const initPagination = (
 ) => {
   // @todo: #2.3 — подготовить шаблон кнопки для страницы и очистить контейнер
   const pageTemplate = pages.firstElementChild.cloneNode(true);
-  pages.firstElementChild.remove();
+  //pages.firstElementChild.remove();
 
   let pageCount;
 
