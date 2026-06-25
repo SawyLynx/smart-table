@@ -1,43 +1,50 @@
-import {createComparison, defaultRules} from "../lib/compare.js";
+export function initFiltering(elements) {
+  const updateIndexes = (elements, indexes) => {
+    Object.keys(indexes).forEach((elementName) => {
+      elements[elementName].append(
+        ...Object.values(indexes[elementName]).map((name) => {
+          const el = document.createElement("option");
+          el.textContent = name;
+          el.value = name;
+          return el;
+        })
+      );
+    });
+  };
 
-// @todo: #4.3 — настроить компаратор
-const compare = createComparison(defaultRules); 
+  const applyFiltering = (query, state, action) => {
+    // код с обработкой очистки поля
+    if (action && action.name === "clear") {
+      const input = action.parentElement.querySelector("input");
 
-export function initFiltering(elements, indexes) {
-    // @todo: #4.1 — заполнить выпадающие списки опциями
-    Object.keys(indexes).forEach((element) => {                        // Перебираем по именам
-        elements[element].append(...Object.values(indexes[element]).map(name => {                        // используйте name как значение и текстовое содержимое
-            const option = document.createElement('option');
-            option.value = name;
-            option.textContent = name;
-            return option;
-        }))
+      if (input) {
+        input.value = "";
+      }
+      const fieldName = action.dataset.field;
+      if (fieldName && fieldName in state) {
+        state[fieldName] = "";
+      }
+    }
+    // @todo: #4.5 — отфильтровать данные, используя компаратор
+    const filter = {};
+    Object.keys(elements).forEach((key) => {
+      if (elements[key]) {
+        if (
+          ["INPUT", "SELECT"].includes(elements[key].tagName) &&
+          elements[key].value
+        ) {
+          filter[`filter[${elements[key].name}]`] = elements[key].value; // чтобы сформировать в query вложенный объект фильтра
+        }
+      }
     });
 
-    return (data, state, action) => {
-        // @todo: #4.2 — обработать очистку поля
-        if (action && action.name === 'clear') {
-            const input = action.parentElement.querySelector('input');
+    return Object.keys(filter).length
+      ? Object.assign({}, query, filter)
+      : query;
+  };
 
-            if (input) {
-                input.value = '';
-            }
-            const fieldName = action.dataset.field;
-            if (fieldName && fieldName in state) {
-                state[fieldName] = '';
-            }
-        }
-
-        const filterState = { ...state };
-
-        const from = state.totalFrom ? parseFloat(state.totalFrom) : undefined;
-        const to = state.totalTo ? parseFloat(state.totalTo) : undefined;
-
-        if (from !== undefined || to !== undefined) {
-            filterState.total = [from, to];
-        }
-
-        // @todo: #4.5 — отфильтровать данные используя компаратор
-        return data.filter(row => compare(row, filterState)); 
-    }
+  return {
+    updateIndexes,
+    applyFiltering,
+  };
 }
